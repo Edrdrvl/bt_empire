@@ -1,0 +1,21 @@
+---
+title: "Final_lab_Ruvolo"
+author: "Edoardo Ruvolo"
+format: html
+editor: visual
+---
+
+## Main data set import
+```{r setup, include= FALSE}
+here::i_am("bt_empire_Ruvolo.Rproj")
+library(here)
+library(vroom)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+library(stringr)
+theme_bw()
+```
+
+Link to the [GitHub repository](https://github.com/Edrdrvl/bt_empire).
