@@ -5,7 +5,9 @@ format: html
 editor: visual
 ---
 
-## Main data set import
+# Part 1
+
+## Question 1 main data set import
 ```{r setup, include= FALSE}
 here::i_am("bt_empire_Ruvolo.Rproj")
 library(here)
@@ -17,6 +19,8 @@ library(knitr)
 library(stringr)
 theme_bw()
 ```
+
+## Question 2 
 
 Link to the [GitHub repository](https://github.com/Edrdrvl/bt_empire).
 
@@ -37,8 +41,9 @@ BattleTech <- vroom(here("Data", "systems.csv"), na = "NA",
 )
 str(BattleTech)
 ```
-Now i move to verify if the data have been uploaded correctly.
+## Question 3
 
+Now i move to verify if the data have been uploaded correctly.
 ```{r}
 
 # Verifying the numerical variables. 
@@ -71,4 +76,68 @@ if ( actual_n_observation == expected_n_observation && actual_n_variables == exp
 }
 ```
 
- 
+## Question 4 
+In this one i created a table displaying the results. 
+```{r}
+# Number of missing values for each variable
+miss_val <- sapply(BattleTech, function(x) sum(is.na(x)))
+
+# Number of observations with at least one missing value
+at_least_miss_val <- sum(apply(BattleTech, 1, function(x) any(is.na(x))))
+
+#Creating a tab
+Recap_tab <- data.frame(Metric = c(
+    "Number of Observations", "Number of Variables",
+    paste("Missing Values in '", names(miss_val), "'", sep = ""),
+    "Observations with at Least One Missing Value"
+  ),Value = c(actual_n_observation, actual_n_variables, miss_val, at_least_miss_val)
+)
+
+#Kable disp
+kable(Recap_tab, format = "markdown", col.names = c("Metric", "Value"))
+
+```
+
+## Question 5 
+```{r}
+#Filtering and plotting the data
+Filtered_Battletech1 <- BattleTech %>%
+  filter(!is.na(`STAR RADIUS`) & !is.na(`Effective Temperature`))
+
+ggplot(Filtered_Battletech1, aes(x = `STAR RADIUS`, y = `Effective Temperature`)) +
+  geom_point() +
+  labs(
+    title = "Temperature of a star as a function of its radius",
+    x = "Radius",
+    y = "Temperature"
+  )
+```
+## Question 6 
+In this one i created a table that report in each variable, the table is very long because many variable have the same observations
+
+```{r}
+extremes <- function(df, variable) {
+  max_row <- df %>%
+    filter(.[[variable]] == max(.[[variable]], na.rm = TRUE)) %>%
+    select(star, Value = !!variable) %>%
+    mutate(Variable = variable, Extremity = "Max")
+
+  min_row <- df %>%
+    filter(.[[variable]] == min(.[[variable]], na.rm = TRUE)) %>%
+    select(star, Value = !!variable) %>%
+    mutate(Variable = variable, Extremity = "Min")
+
+  rbind(max_row, min_row)
+}
+
+extremes_distance <- extremes(BattleTech, "DISTANCE (LIGHTYEARS)")
+extremes_temperature <- extremes(BattleTech, "Effective Temperature")
+extremes_mass <- extremes(BattleTech, "Relative Mass")
+extremes_radius <- extremes(BattleTech, "STAR RADIUS")
+extremes_luminosity <- extremes(BattleTech, "LUMINOSITY")
+
+extreme_tab <- rbind(extremes_distance, extremes_temperature, extremes_mass, extremes_radius, extremes_luminosity)
+
+kable(extreme_tab, format = "markdown", col.names = c("Stars Name", "Value", "Variable", "Extremity"))
+```
+
