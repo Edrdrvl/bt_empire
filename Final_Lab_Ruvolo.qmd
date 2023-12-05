@@ -19,3 +19,24 @@ theme_bw()
 ```
 
 Link to the [GitHub repository](https://github.com/Edrdrvl/bt_empire).
+
+```{r}
+# Changing the loading process to handle missing values and decimal mark
+BattleTech <- vroom(here("Data", "systems.csv"), na = "NA",
+  col_types = cols(
+    "Star_code" = col_double(),
+    "star" = col_character(),
+    "DISTANCE (LIGHTYEARS)" = col_double(),
+    "Effective Temperature" = col_double(),
+    "Relative Mass" = col_double(),
+    "STAR RADIUS" = col_double(),
+    "LUMINOSITY" = col_double(),
+    "stellar type" = col_character(),
+  ),
+  locale = locale(decimal_mark = ",")
+)
+str(BattleTech)
+```
+Now i move to verify if the data have been uploaded correctly.
+
+ 
