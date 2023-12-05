@@ -165,5 +165,63 @@ filtered_counts <- counts %>%
   filter(Subfaction %in% c('A', 'I', 'U'))
 kable(filtered_counts, format = "markdown", col.names = c("Subfaction", "Value"))
 ```
+## Question 11
+In this part i created a graphical representation.
+
+```{r}
+factions_with_systems <- Factionsystem %>%
+  group_by(Subfaction) %>%
+  summarise(Controlled_Systems = n_distinct(Star_code)) %>%
+  filter(Controlled_Systems > 1)  # Keep only factions controlling at least one system
+
+factions_with_systems <- factions_with_systems[order(factions_with_systems$Controlled_Systems, decreasing = TRUE), ]
+
+ggplot(factions_with_systems, aes(x = reorder(Subfaction, Controlled_Systems), y = Controlled_Systems)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Number of Star Systems Controlled by Each Faction",
+       x = "Faction Name",
+       y = "Number of Controlled Star Systems")
+```
+## Question 12
+
+Represent graphically the distance to the Sun of star systems conditioned by the controlling faction, including only real factions
+```{r}
+Distance_to_Sun <- left_join(Factionsystem, BattleTech, by = "Star_code")
+
+Distance_to_Sun <- Distance_to_Sun |>
+  select(Star_code, Subfaction, `DISTANCE (LIGHTYEARS)`)
+
+real_factions <- Distance_to_Sun |>
+  filter(!Subfaction %in% c('A', 'I', 'U') & !is.na(`DISTANCE (LIGHTYEARS)`))
+
+ggplot(real_factions, aes(x = Subfaction, y = `DISTANCE (LIGHTYEARS)`)) +
+  geom_point() +
+  labs(title = "Distance to the Sun of Star Systems by Controlling Faction",
+       x = "Controlling Faction",
+       y = "Distance to the Sun")
+```
+## Question 13
+
+
+```{r}
+Mass_func <- left_join(Factionsystem, BattleTech, by = "Star_code")
+
+Mass_func <- Mass_func |>
+  select(Star_code, Subfaction, `Relative Mass`) |>
+  filter(!Subfaction %in% c('A', 'I', 'U') & !is.na("Relative Mass"))
+
+most_massive_per_faction <- Mass_func %>%
+  group_by(Subfaction) %>%
+  summarise(Max_Mass = max(`Relative Mass`, na.rm = TRUE)) %>%
+  arrange(desc(Max_Mass))
+
+```
+
+```{r}
+star_type <- vroom(here("Data", "startypes.csv")) 
+star_class <- vroom(here("Data", "Yerkes_luminosity_classes.csv")) 
+```
+
+
 
 
