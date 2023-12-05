@@ -140,4 +140,30 @@ extreme_tab <- rbind(extremes_distance, extremes_temperature, extremes_mass, ext
 
 kable(extreme_tab, format = "markdown", col.names = c("Stars Name", "Value", "Variable", "Extremity"))
 ```
+## Question 7
+
+adding the new data sets
+```{r}
+THEFactions <- vroom(here("Data", "THE+FACTIONS.csv"),
+  col_types = cols(
+    "FACTION_KEY" = col_character(),
+    "name of the faction" = col_character(),
+    "FOUNDING YEAR" = col_double(),
+    "Dissolution Year" = col_double(),
+  ),
+  locale = locale(decimal_mark = ",")
+)
+str(THEFactions)
+
+Factionsystem <- vroom(here("Data", "FACTION-SYSTEM.csv"))
+```
+## Question 8-9 
+In this question, i created a table that would present the number of abandoned star systems, independent systems (they are not controlled by any faction) and systems that are not yet discovered during year 2830.
+
+```{r}
+filtered_counts <- counts %>%
+  filter(Subfaction %in% c('A', 'I', 'U'))
+kable(filtered_counts, format = "markdown", col.names = c("Subfaction", "Value"))
+```
+
 
