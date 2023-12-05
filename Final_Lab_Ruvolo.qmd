@@ -21,7 +21,7 @@ theme_bw()
 Link to the [GitHub repository](https://github.com/Edrdrvl/bt_empire).
 
 ```{r}
-# Changing the loading process to handle missing values and decimal mark
+# adjustment in the data loading.
 BattleTech <- vroom(here("Data", "systems.csv"), na = "NA",
   col_types = cols(
     "Star_code" = col_double(),
@@ -38,5 +38,37 @@ BattleTech <- vroom(here("Data", "systems.csv"), na = "NA",
 str(BattleTech)
 ```
 Now i move to verify if the data have been uploaded correctly.
+
+```{r}
+
+# Verifying the numerical variables. 
+numerical_variables <- c("Star_code", "DISTANCE (LIGHTYEARS)", "Effective Temperature", "Relative Mass", "STAR RADIUS","LUMINOSITY")
+are_numerical <- sapply(BattleTech[numerical_variables], is.numeric)
+
+# Expected number of variables and observation in my data set compared to the actual number of observation. 
+
+expected_n_observation <- 1063
+expected_n_variables <- 8
+actual_n_observation <- nrow(BattleTech)
+actual_n_variables <- ncol(BattleTech)
+
+# Function to display the result in a message. 
+if (all(are_numerical)) {
+  message("All numerical variables are correctly recognized as numerical.")
+} else {
+  message("Some numerical variables are not recognized correctly.")
+}
+
+if ( actual_n_observation == expected_n_observation && actual_n_variables == expected_n_variables) {
+  message("Data loaded successfully with the correct number of variables and observation.")
+} else {
+  message(
+    "Data loading issue: Expected rows: ", expected_n_observation,
+    ", Actual rows: ", actual_n_observation,
+    "; Expected columns: ", expected_n_variables,
+    ", Actual columns: ", actual_n_observation
+  )
+}
+```
 
  
